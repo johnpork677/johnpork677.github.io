@@ -36,45 +36,30 @@ document.querySelectorAll(".input_holder").forEach((element) => {
 });
 
 imageInput.addEventListener("change", (event) => {
-    var file = imageInput.files[0];
-    if (!file) return;
+  upload.classList.remove("upload_loaded");
+  upload.classList.add("upload_loading");
 
-    // ograniczenie rozmiaru do 5MB
-    if (file.size > 5 * 1024 * 1024) {
-        alert("Plik jest za duży! Maks. 5MB.");
-        return;
-    }
+  upload.removeAttribute("selected");
 
-    // podgląd lokalny przed wysyłką
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        upload.querySelector(".upload_uploaded").src = e.target.result;
-        upload.classList.add("upload_loaded");
-    };
-    reader.readAsDataURL(file);
+  var file = imageInput.files[0];
+  var data = new FormData();
+  data.append("image", file);
 
-    // pokaz animację uploadu
-    upload.classList.add("upload_loading");
-
-    // wysyłka do Imgur
-    var data = new FormData();
-    data.append("image", file);
-
-    fetch("https://api.imgur.com/3/image", {
-        method: "POST",
-        headers: { Authorization: "Client-ID e4d98a899c8c946" },
-        body: data,
-    })
-    .then(result => result.json())
-    .then(response => {
-        var url = response.data.link;
-        upload.setAttribute("selected", url);
-        upload.classList.remove("upload_loading");
-    })
-    .catch(err => {
-        console.error(err);
-        alert("Wystąpił błąd podczas uploadu");
-        upload.classList.remove("upload_loading");
+  fetch("https://api.imgur.com/3/image", {
+    method: "POST",
+    headers: {
+      Authorization: "Client-ID e4d98a899c8c946",
+    },
+    body: data,
+  })
+    .then((result) => result.json())
+    .then((response) => {
+      var url = response.data.link;
+      upload.classList.remove("error_shown");
+      upload.setAttribute("selected", url);
+      upload.classList.add("upload_loaded");
+      upload.classList.remove("upload_loading");
+      upload.querySelector(".upload_uploaded").src = url;
     });
 });
 
@@ -139,3 +124,4 @@ guide.addEventListener("click", () => {
     guide.classList.add("unfolded");
   }
 });
+
