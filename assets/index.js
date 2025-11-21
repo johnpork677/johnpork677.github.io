@@ -37,8 +37,7 @@ document.querySelectorAll(".input_holder").forEach((element) => {
 
 imageInput.addEventListener("change", (event) => {
   upload.classList.remove("upload_loaded");
-  upload.classList.add("upload_loading");
-
+  upload.querySelector(".upload_uploading").style.display = "block"; // pokaż spinner
   upload.removeAttribute("selected");
 
   var file = imageInput.files[0];
@@ -58,10 +57,16 @@ imageInput.addEventListener("change", (event) => {
       upload.classList.remove("error_shown");
       upload.setAttribute("selected", url);
       upload.classList.add("upload_loaded");
-      upload.classList.remove("upload_loading");
+      upload.querySelector(".upload_uploading").style.display = "none"; // ukryj spinner
       upload.querySelector(".upload_uploaded").src = url;
+    })
+    .catch((err) => {
+      console.error(err);
+      alert("Wystąpił błąd podczas uploadu");
+      upload.querySelector(".upload_uploading").style.display = "none"; // ukryj spinner
     });
 });
+
 
 
 document.querySelector(".go").addEventListener("click", () => {
@@ -124,5 +129,6 @@ guide.addEventListener("click", () => {
     guide.classList.add("unfolded");
   }
 });
+
 
 
