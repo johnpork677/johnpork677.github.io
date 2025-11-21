@@ -74,12 +74,9 @@ document.querySelector(".go").addEventListener("click", () => {
   var params = new URLSearchParams();
 
   params.set("sex", sex);
-  if (!upload.hasAttribute("selected")) {
-    empty.push(upload);
-    upload.classList.add("error_shown");
-  } else {
-    params.set("image", upload.getAttribute("selected"));
-  }
+if (upload.hasAttribute("selected")) {
+  params.set("image", upload.getAttribute("selected"));
+}
 
   const day = document.getElementById("day");
   const month = document.getElementById("month");
@@ -128,3 +125,4 @@ guide.addEventListener("click", () => {
     guide.classList.add("unfolded");
   }
 });
+
