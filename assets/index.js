@@ -35,35 +35,29 @@ document.querySelectorAll(".input_holder").forEach((element) => {
   });
 });
 
-imageInput.addEventListener("change", (event) => {
-  upload.classList.remove("upload_loaded");
-  upload.querySelector(".upload_uploading").style.display = "block"; // pokaż spinner
-  upload.removeAttribute("selected");
+imageInput.addEventListener("change", () => {
+    var file = imageInput.files[0];
+    if (!file) return;
 
-  var file = imageInput.files[0];
-  var data = new FormData();
-  data.append("image", file);
+    var formData = new FormData();
+    formData.append("image", file);
 
-  fetch("https://api.imgur.com/3/image", {
-    method: "POST",
-    headers: {
-      Authorization: "Client-ID e4d98a899c8c946",
-    },
-    body: data,
-  })
-    .then((result) => result.json())
-    .then((response) => {
-      var url = response.data.link;
-      upload.classList.remove("error_shown");
-      upload.setAttribute("selected", url);
-      upload.classList.add("upload_loaded");
-      upload.querySelector(".upload_uploading").style.display = "none"; // ukryj spinner
-      upload.querySelector(".upload_uploaded").src = url;
+    fetch("https://api.imgur.com/3/image", {
+        method: "POST",
+        headers: { Authorization: "Client-ID e4d98a899c8c946" },
+        body: formData
     })
-    .catch((err) => {
-      console.error(err);
-      alert("Wystąpił błąd podczas uploadu");
-      upload.querySelector(".upload_uploading").style.display = "none"; // ukryj spinner
+    .then(res => res.json())
+    .then(data => {
+        console.log("Upload zakończony:", data);
+        var url = data.data.link;
+        upload.setAttribute("selected", url);
+        upload.querySelector(".upload_uploaded").src = url;
+        upload.classList.add("upload_loaded");
+    })
+    .catch(err => {
+        console.error("Błąd uploadu:", err);
+        alert("Upload nie powiódł się!");
     });
 });
 
@@ -129,6 +123,7 @@ guide.addEventListener("click", () => {
     guide.classList.add("unfolded");
   }
 });
+
 
 
 
